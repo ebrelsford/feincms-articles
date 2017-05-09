@@ -1,7 +1,8 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from feincms import extensions
+from taggit.views import tagged_object_list
 
 try:
     from taggit.managers import TaggableManager
@@ -16,11 +17,11 @@ class Extension(extensions.Extension):
 
         @classmethod
         def get_urlpatterns(cls):
-            taggit_patterns = patterns('taggit.views',
-                url(r'^tags/(?P<slug>[^/]+)/$', 'tagged_object_list', {
+            taggit_patterns = [
+                url(r'^tags/(?P<slug>[^/]+)/$', tagged_object_list, {
                     'queryset': cls.objects.active}, name="article_tagged_list"
                 ),
-            )
+            ]
             return cls.get_urlpatterns_orig() + taggit_patterns
         self.model.get_urlpatterns = get_urlpatterns
 
